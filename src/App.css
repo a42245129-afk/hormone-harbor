@@ -1297,3 +1297,332 @@ footer {
   flex-wrap: wrap;
   gap: 16px;
 }
+
+/* ============================================
+   PCOS DETECTION DECK STYLES
+   ============================================ */
+
+/* Progress bar */
+.deck-progress-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 99px;
+  margin-bottom: 32px;
+  overflow: visible;
+}
+
+.deck-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), var(--lavender));
+  border-radius: 99px;
+  transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 12px rgba(255, 94, 126, 0.6);
+}
+
+.deck-progress-label {
+  position: absolute;
+  right: 0;
+  top: -22px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* Card stack wrap */
+.pcos-deck-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto 12px;
+  height: 360px;
+}
+
+/* Shadow cards for stack effect */
+.pcos-shadow-card {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  border-radius: 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+}
+
+.pcos-shadow-card.shadow-1 {
+  bottom: -14px;
+  height: calc(100% - 20px);
+  opacity: 0.55;
+  width: 93%;
+}
+
+.pcos-shadow-card.shadow-2 {
+  bottom: -26px;
+  height: calc(100% - 36px);
+  opacity: 0.3;
+  width: 87%;
+}
+
+/* Main detection card */
+.pcos-detection-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(22, 16, 50, 0.92), rgba(10, 8, 30, 0.96));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(199, 146, 234, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease;
+  overflow: hidden;
+}
+
+.pcos-detection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), var(--lavender), var(--cyan));
+  border-radius: 24px 24px 0 0;
+}
+
+/* Swipe animations */
+.pcos-detection-card.swipe-yes {
+  transform: translateX(120%) rotate(18deg);
+  opacity: 0;
+}
+
+.pcos-detection-card.swipe-no {
+  transform: translateX(-120%) rotate(-18deg);
+  opacity: 0;
+}
+
+/* Card front content */
+.pcos-card-front {
+  padding: 32px 28px 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+
+.pcos-card-icon {
+  font-size: 2.8rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 12px rgba(199, 146, 234, 0.5));
+}
+
+.pcos-card-criterion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--lavender);
+  background: rgba(199, 146, 234, 0.12);
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid rgba(199, 146, 234, 0.25);
+}
+
+.pcos-card-signal {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.pcos-card-detail {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+.pcos-learn-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: auto;
+}
+
+.pcos-learn-btn:hover {
+  background: rgba(199, 146, 234, 0.15);
+  border-color: var(--lavender);
+  color: var(--lavender);
+}
+
+/* Learn More Overlay */
+.pcos-learn-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(30, 18, 70, 0.97), rgba(12, 8, 35, 0.98));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 28px;
+  animation: fadeInOverlay 0.25s ease;
+  z-index: 5;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.pcos-learn-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+/* Action buttons row */
+.deck-action-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 24px 0 8px;
+}
+
+.deck-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 32px;
+  border-radius: 20px;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  min-width: 140px;
+  border: 2px solid transparent;
+}
+
+.deck-btn:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+
+.deck-btn:active {
+  transform: translateY(0) scale(0.97);
+}
+
+.deck-btn-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.deck-btn-no {
+  background: rgba(0, 242, 254, 0.08);
+  border-color: rgba(0, 242, 254, 0.35);
+  color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.1);
+}
+
+.deck-btn-no:hover {
+  background: rgba(0, 242, 254, 0.18);
+  border-color: var(--cyan);
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.25);
+}
+
+.deck-btn-yes {
+  background: rgba(255, 94, 126, 0.1);
+  border-color: rgba(255, 94, 126, 0.4);
+  color: var(--coral);
+  box-shadow: 0 0 20px rgba(255, 94, 126, 0.12);
+}
+
+.deck-btn-yes:hover {
+  background: rgba(255, 94, 126, 0.22);
+  border-color: var(--coral);
+  box-shadow: 0 0 30px rgba(255, 94, 126, 0.3);
+}
+
+/* Result screen */
+.deck-result-tag {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 99px;
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 8px 0 4px;
+}
+
+/* Reported signals list */
+.deck-result-list {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.deck-result-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s;
+}
+
+.deck-result-item:hover {
+  background: rgba(255, 94, 126, 0.06);
+}
+
+.deck-result-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.deck-result-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.deck-result-learn {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}

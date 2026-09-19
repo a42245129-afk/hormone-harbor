@@ -341,42 +341,97 @@ const MYTHS = [
   },
 ];
 
-// Signal Sorter Deck
-const SORTER_CARDS = [
+// PCOS Detection Deck — 10 signal cards based on Rotterdam Criteria & 2023 PCOS Guidelines
+const PCOS_DETECTION_DECK = [
   {
-    id: "c1",
-    title: "Occasional acne spot on forehead",
-    description: "Appears during stressful weeks or before periods.",
-    correctCategory: "puberty",
-    categoryLabel: "Common during puberty",
+    id: "pd1",
+    signal: "Irregular or missing periods",
+    icon: "🔴",
+    detail: "Cycles longer than 35 days, fewer than 8 periods per year, or no period for 90+ days (after 2 years from first period).",
+    criterion: "menstrual",
+    weight: 2,
+    learnMore: "Menstrual irregularity is one of the two main Rotterdam criteria for PCOS. It reflects disrupted ovulation patterns.",
   },
   {
-    id: "c2",
-    title: "Period missing for 4+ consecutive months",
-    description: "Repeated pattern after previously having regular cycles.",
-    correctCategory: "pattern",
-    categoryLabel: "Track the pattern",
+    id: "pd2",
+    signal: "Persistent facial or body hair growth",
+    icon: "✦",
+    detail: "Noticeable new coarse hair on chin, upper lip, chest, or back — distinct from normal body hair everyone has.",
+    criterion: "androgen",
+    weight: 2,
+    learnMore: "This is called hirsutism and is a clinical sign of elevated androgens — a core Rotterdam criterion.",
   },
   {
-    id: "c3",
-    title: "Noticeable coarse facial hair growth",
-    description: "New persistent growth on chin, upper lip, or chest.",
-    correctCategory: "pro",
-    categoryLabel: "Talk to a professional",
+    id: "pd3",
+    signal: "Persistent, severe, or cystic acne",
+    icon: "💢",
+    detail: "Acne that doesn't respond to normal skincare, appears on jawline, chin, or chest, and is consistently severe.",
+    criterion: "androgen",
+    weight: 1,
+    learnMore: "Severe androgen-driven acne is a clinical hyperandrogenism indicator used in PCOS evaluation.",
   },
   {
-    id: "c4",
-    title: "Sudden agonizing pelvic pain & dizziness",
-    description: "Unable to stand up straight or severe fainting episode.",
-    correctCategory: "urgent",
-    categoryLabel: "Urgent human support",
+    id: "pd4",
+    signal: "Scalp hair thinning or loss",
+    icon: "🌿",
+    detail: "Thinning at the top of the scalp or widening of the hair part — distinct from normal daily hair shedding.",
+    criterion: "androgen",
+    weight: 1,
+    learnMore: "Female-pattern hair thinning (androgenic alopecia) can indicate androgen excess linked to PCOS.",
   },
   {
-    id: "c5",
-    title: "Sleep pattern shifting later at night",
-    description: "Feeling awake at 11 PM and tired at 7 AM.",
-    correctCategory: "puberty",
-    categoryLabel: "Common during puberty",
+    id: "pd5",
+    signal: "Darkened skin patches or velvety skin texture",
+    icon: "🌑",
+    detail: "Dark, velvety or rough patches in neck folds, armpits, groin, or skin creases — not from sun exposure.",
+    criterion: "metabolic",
+    weight: 1,
+    learnMore: "Acanthosis nigricans is a skin sign of insulin resistance, which is very commonly associated with PCOS.",
+  },
+  {
+    id: "pd6",
+    signal: "Sudden or unexplained weight gain around the abdomen",
+    icon: "⬆",
+    detail: "Weight accumulating specifically around the belly or waist, even with no major change in eating or activity.",
+    criterion: "metabolic",
+    weight: 1,
+    learnMore: "Central obesity and weight gain are metabolic features linked to insulin resistance in PCOS.",
+  },
+  {
+    id: "pd7",
+    signal: "Mood changes, anxiety, or low energy linked to cycle",
+    icon: "🌀",
+    detail: "Persistent mood dips, brain fog, or extreme fatigue not explained by sleep or stress alone — often cycle-linked.",
+    criterion: "systemic",
+    weight: 1,
+    learnMore: "Hormonal imbalances in PCOS can affect the nervous system, contributing to mood and energy dysregulation.",
+  },
+  {
+    id: "pd8",
+    signal: "Bloating or pelvic heaviness",
+    icon: "🔵",
+    detail: "Recurring pelvic pressure, ovarian area discomfort, or significant bloating not tied to digestion alone.",
+    criterion: "ovarian",
+    weight: 1,
+    learnMore: "Ovarian cysts (follicular collections) in PCOS can sometimes cause pelvic pressure or discomfort.",
+  },
+  {
+    id: "pd9",
+    signal: "Difficulty losing weight despite trying",
+    icon: "⚡",
+    detail: "Resistance to weight changes even with dietary adjustments — the body's energy regulation feels disrupted.",
+    criterion: "metabolic",
+    weight: 1,
+    learnMore: "Insulin resistance in PCOS makes weight management harder by affecting how cells use glucose for energy.",
+  },
+  {
+    id: "pd10",
+    signal: "A doctor or professional has mentioned hormone concerns",
+    icon: "🩺",
+    detail: "A healthcare professional mentioned elevated androgens, irregular hormones, or ovarian cysts on an ultrasound.",
+    criterion: "clinical",
+    weight: 2,
+    learnMore: "A clinical evaluation (blood tests for LH, FSH, testosterone, AMH; pelvic ultrasound) is how PCOS is formally assessed.",
   },
 ];
 
@@ -431,8 +486,13 @@ export default function App() {
   const [mythIndex, setMythIndex] = useState(0);
   const [mythFeedback, setMythFeedback] = useState(null);
 
-  const [sorterIndex, setSorterIndex] = useState(0);
-  const [sorterFeedback, setSorterFeedback] = useState(null);
+  // PCOS Detection Deck state
+  const [deckIndex, setDeckIndex] = useState(0);
+  const [deckAnswers, setDeckAnswers] = useState({});
+  const [deckPhase, setDeckPhase] = useState("cards"); // 'cards' | 'result'
+  const [deckFlipped, setDeckFlipped] = useState(false);
+  const [deckSwipeDir, setDeckSwipeDir] = useState(null); // 'yes' | 'no'
+
 
   const [cyclePhase, setCyclePhase] = useState("follicular");
 
@@ -499,10 +559,98 @@ export default function App() {
     setScreen("island");
     setMythIndex(0);
     setMythFeedback(null);
-    setSorterIndex(0);
-    setSorterFeedback(null);
+    setDeckIndex(0);
+    setDeckAnswers({});
+    setDeckPhase("cards");
+    setDeckFlipped(false);
+    setDeckSwipeDir(null);
     setIsBreathingActive(false);
     awardXp(0);
+  }
+
+  // PCOS Detection Deck helpers
+  function handleDeckAnswer(answeredYes) {
+    const card = PCOS_DETECTION_DECK[deckIndex];
+    setDeckSwipeDir(answeredYes ? "yes" : "no");
+    setTimeout(() => {
+      const newAnswers = { ...deckAnswers, [card.id]: answeredYes };
+      setDeckAnswers(newAnswers);
+      setDeckFlipped(false);
+      setDeckSwipeDir(null);
+      if (deckIndex < PCOS_DETECTION_DECK.length - 1) {
+        setDeckIndex(deckIndex + 1);
+      } else {
+        setDeckPhase("result");
+        awardXp(75, "bodylab");
+      }
+    }, 350);
+  }
+
+  function getDeckResult() {
+    const yesCards = PCOS_DETECTION_DECK.filter((c) => deckAnswers[c.id] === true);
+    const hasMenstrual = yesCards.some((c) => c.criterion === "menstrual");
+    const hasAndrogen = yesCards.some((c) => c.criterion === "androgen");
+    const hasClinical = yesCards.some((c) => c.criterion === "clinical");
+    const totalWeight = yesCards.reduce((sum, c) => sum + c.weight, 0);
+
+    if (hasClinical) {
+      return {
+        level: "clinical",
+        tag: "CLINICAL SIGNALS REPORTED",
+        headline: "Your Doctor Already Has Concerns — Follow Up!",
+        color: "var(--coral)",
+        text: "You indicated that a healthcare professional already mentioned hormone or ovarian concerns. This is significant — if you haven't had a full follow-up including blood tests or ultrasound, now is a great time to schedule that.",
+        tip: "Ask your doctor specifically about LH, FSH, testosterone, AMH levels and a pelvic ultrasound.",
+      };
+    }
+    if (hasMenstrual && hasAndrogen) {
+      return {
+        level: "high",
+        tag: "ROTTERDAM CRITERIA SIGNALS PRESENT",
+        headline: "Multiple PCOS Indicators Detected",
+        color: "var(--coral)",
+        text: "You reported both menstrual irregularity AND at least one androgen-related sign (hirsutism, cystic acne, or hair thinning). These two together are the core Rotterdam PCOS criteria. This is worth discussing with a gynecologist or endocrinologist.",
+        tip: "Write down your cycle dates for the last 3–6 months and bring them to your appointment.",
+      };
+    }
+    if (hasMenstrual && totalWeight >= 3) {
+      return {
+        level: "moderate",
+        tag: "MENSTRUAL + METABOLIC SIGNALS",
+        headline: "Cycle Irregularity + Metabolic Signs",
+        color: "var(--gold)",
+        text: "You reported irregular periods along with metabolic signals like insulin resistance signs or weight changes. While this doesn't confirm PCOS, it's worth tracking and discussing with a doctor who can order blood work.",
+        tip: "Track your cycle for 3 months using a free app like Clue or Flo and share the data with your doctor.",
+      };
+    }
+    if (hasMenstrual || hasAndrogen) {
+      return {
+        level: "watch",
+        tag: "SINGLE CRITERION SIGNAL",
+        headline: "One Key Signal — Worth Monitoring",
+        color: "var(--cyan)",
+        text: "You reported one primary PCOS signal. A single irregular cycle or isolated skin change can be normal during adolescence. Monitor the pattern over time. If it persists for 6+ months, bring it up at your next check-up.",
+        tip: "Keep a simple note on your phone: date period starts, how long, any unusual symptoms.",
+      };
+    }
+    if (totalWeight >= 2) {
+      return {
+        level: "low",
+        tag: "SECONDARY SIGNALS ONLY",
+        headline: "Some Secondary Signals — Stay Curious",
+        color: "var(--lavender)",
+        text: "You reported some secondary signals (metabolic, systemic, or ovarian). On their own, these don't point to PCOS, but they are worth being aware of. Stay connected with your body and see a doctor for regular wellness check-ups.",
+        tip: "Ask your doctor for a general hormone panel at your next annual check-up.",
+      };
+    }
+    return {
+      level: "none",
+      tag: "NO PRIMARY SIGNALS REPORTED",
+      headline: "You're Rocking This — Keep Learning!",
+      color: "var(--emerald)",
+      text: "You didn't report the main PCOS signals in this check-in. That's a great sign! Keep learning about your body, track your cycles, and don't hesitate to ask a doctor if anything changes.",
+      tip: "Prevention is power — continue annual wellness check-ups and stay informed.",
+    };
   }
 
   // PCOS Check-in Flow
@@ -565,32 +713,6 @@ export default function App() {
     };
   }
 
-  // Signal Sorter Mini-Game Handler
-  function handleSortChoice(category) {
-    const card = SORTER_CARDS[sorterIndex];
-    const isCorrect = category === card.correctCategory;
-
-    setSorterFeedback({
-      isCorrect,
-      text: isCorrect
-        ? `W Move! "${card.title}" belongs under ${card.categoryLabel}.`
-        : `Not quite! "${card.title}" is best placed under ${card.categoryLabel}.`,
-    });
-
-    if (isCorrect) {
-      awardXp(15);
-    }
-  }
-
-  function nextSorterCard() {
-    setSorterFeedback(null);
-    if (sorterIndex < SORTER_CARDS.length - 1) {
-      setSorterIndex(sorterIndex + 1);
-    } else {
-      setSorterIndex(0);
-      awardXp(50, "bodylab");
-    }
-  }
 
   // Myth Handler
   function handleMythAnswer(chosenAnswer) {
@@ -962,74 +1084,198 @@ export default function App() {
           </section>
         )}
 
-        {/* SCREEN 3: BODY LAB (SIGNAL SORTER) */}
-        {screen === "bodylab" && (
+        {/* SCREEN 3: BODY LAB — PCOS DETECTION DECK */}
+        {screen === "bodylab" && deckPhase === "cards" && (
           <section className="glass-panel sorter-shell">
             <div className="eyebrow">
               <IconDnaCore size={14} color="#FF5E7E" />
-              <span>ZONE 02 · BODY LAB</span>
+              <span>ZONE 02 · BODY LAB — PCOS DETECTION DECK</span>
             </div>
-            <h2 style={{ fontFamily: "var(--font-heading)" }}>Signal Sorter Challenge</h2>
-            <p style={{ color: "var(--text-muted)", marginBottom: "20px" }}>
-              Sort each body change card into the right category. Earn XP for learning patterns!
+            <h2 style={{ fontFamily: "var(--font-heading)" }}>Do I Have PCOS?</h2>
+            <p style={{ color: "var(--text-muted)", marginBottom: "8px" }}>
+              Swipe through 10 PCOS signal cards. Tap <strong style={{color:"var(--coral)"}}>Applies to Me</strong> or <strong style={{color:"var(--cyan)"}}>Not Really</strong> for each.
             </p>
+            <p style={{ color: "var(--text-dim)", fontSize: "0.8rem", marginBottom: "24px" }}
+            >⚕️ Educational only — not a diagnosis. A licensed doctor makes any diagnosis.</p>
 
-            <div className="sorter-card-deck">
-              <div className="sorter-active-card">
-                <div className="sorter-card-tag">CARD {sorterIndex + 1} OF {SORTER_CARDS.length}</div>
-                <div className="sorter-card-title">{SORTER_CARDS[sorterIndex].title}</div>
-                <div className="sorter-card-desc">{SORTER_CARDS[sorterIndex].description}</div>
-              </div>
+            {/* Progress bar */}
+            <div className="deck-progress-bar">
+              <div
+                className="deck-progress-fill"
+                style={{ width: `${(deckIndex / PCOS_DETECTION_DECK.length) * 100}%` }}
+              />
+              <span className="deck-progress-label">{deckIndex + 1} / {PCOS_DETECTION_DECK.length}</span>
             </div>
 
-            {!sorterFeedback ? (
-              <div className="sorter-buckets">
-                <button
-                  className="sorter-bucket-btn puberty"
-                  onClick={() => handleSortChoice("puberty")}
-                >
-                  <IconEnergyCore size={20} color="#00E676" />
-                  <span>Common during Puberty</span>
-                </button>
-                <button
-                  className="sorter-bucket-btn pattern"
-                  onClick={() => handleSortChoice("pattern")}
-                >
-                  <IconLunarCore size={20} color="#FFD166" />
-                  <span>Track the Pattern</span>
-                </button>
-                <button
-                  className="sorter-bucket-btn pro"
-                  onClick={() => handleSortChoice("pro")}
-                >
-                  <IconDnaCore size={20} color="#FF5E7E" />
-                  <span>Talk to a Professional</span>
-                </button>
-                <button
-                  className="sorter-bucket-btn urgent"
-                  onClick={() => handleSortChoice("urgent")}
-                >
-                  <IconCrossPulse size={20} color="#FF3366" />
-                  <span>Urgent Human Support</span>
-                </button>
+            {/* Card Stack Visualization */}
+            <div className="pcos-deck-wrap">
+              {/* Shadow cards beneath for stack effect */}
+              {deckIndex + 2 < PCOS_DETECTION_DECK.length && (
+                <div className="pcos-shadow-card shadow-2" />
+              )}
+              {deckIndex + 1 < PCOS_DETECTION_DECK.length && (
+                <div className="pcos-shadow-card shadow-1" />
+              )}
+
+              {/* Active card */}
+              <div
+                className={`pcos-detection-card ${
+                  deckSwipeDir === "yes" ? "swipe-yes" : deckSwipeDir === "no" ? "swipe-no" : ""
+                } ${deckFlipped ? "flipped" : ""}`}
+              >
+                <div className="pcos-card-front">
+                  <div className="pcos-card-icon">{PCOS_DETECTION_DECK[deckIndex].icon}</div>
+                  <div className="pcos-card-criterion">{
+                    PCOS_DETECTION_DECK[deckIndex].criterion === "menstrual" ? "🩸 MENSTRUAL" :
+                    PCOS_DETECTION_DECK[deckIndex].criterion === "androgen" ? "⚡ ANDROGEN" :
+                    PCOS_DETECTION_DECK[deckIndex].criterion === "metabolic" ? "🔥 METABOLIC" :
+                    PCOS_DETECTION_DECK[deckIndex].criterion === "ovarian" ? "🔵 OVARIAN" :
+                    PCOS_DETECTION_DECK[deckIndex].criterion === "clinical" ? "🩺 CLINICAL" :
+                    "💫 SYSTEMIC"
+                  }</div>
+                  <h3 className="pcos-card-signal">{PCOS_DETECTION_DECK[deckIndex].signal}</h3>
+                  <p className="pcos-card-detail">{PCOS_DETECTION_DECK[deckIndex].detail}</p>
+
+                  <button
+                    className="pcos-learn-btn"
+                    onClick={() => setDeckFlipped(true)}
+                  >
+                    🔬 Why does this matter?
+                  </button>
+                </div>
               </div>
-            ) : (
-              <div className={`myth-feedback-box ${sorterFeedback.isCorrect ? "good" : "bad"}`}>
-                <strong>{sorterFeedback.isCorrect ? "W move! +15 XP" : "Learning Moment!"}</strong>
-                <p>{sorterFeedback.text}</p>
-                <button className="primary-button" onClick={nextSorterCard}>
-                  {sorterIndex < SORTER_CARDS.length - 1 ? "Next Card →" : "Complete Mission →"}
+
+              {/* Learn More overlay */}
+              {deckFlipped && (
+                <div className="pcos-learn-overlay">
+                  <div className="pcos-learn-content">
+                    <div className="pcos-card-criterion">🔬 SCIENCE BEHIND IT</div>
+                    <p style={{ color: "var(--text-main)", lineHeight: "1.7", fontSize: "1.05rem" }}>
+                      {PCOS_DETECTION_DECK[deckIndex].learnMore}
+                    </p>
+                    <button className="secondary-button" onClick={() => setDeckFlipped(false)}>
+                      Got it ← Back
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action buttons */}
+            {!deckFlipped && (
+              <div className="deck-action-row">
+                <button
+                  className="deck-btn deck-btn-no"
+                  onClick={() => handleDeckAnswer(false)}
+                >
+                  <span className="deck-btn-icon">✕</span>
+                  <span>Not Really</span>
+                </button>
+                <button
+                  className="deck-btn deck-btn-yes"
+                  onClick={() => handleDeckAnswer(true)}
+                >
+                  <span className="deck-btn-icon">✓</span>
+                  <span>Applies to Me</span>
                 </button>
               </div>
             )}
 
-            <div style={{ marginTop: "30px", textAlign: "center" }}>
+            <div style={{ marginTop: "20px", textAlign: "center" }}>
               <button className="secondary-button" onClick={() => setScreen("island")}>
                 Return to Map
               </button>
             </div>
           </section>
         )}
+
+        {/* BODY LAB RESULT SCREEN */}
+        {screen === "bodylab" && deckPhase === "result" && (() => {
+          const result = getDeckResult();
+          const yesCards = PCOS_DETECTION_DECK.filter((c) => deckAnswers[c.id] === true);
+          return (
+            <section className="glass-panel result-shell">
+              <div className="eyebrow">
+                <IconDnaCore size={14} color="#FF5E7E" />
+                <span>ZONE 02 · PCOS DETECTION RESULT</span>
+              </div>
+
+              <div className="deck-result-tag" style={{ color: result.color }}>
+                {result.tag}
+              </div>
+              <h2 style={{ fontFamily: "var(--font-heading)", color: result.color, margin: "12px 0" }}>
+                {result.headline}
+              </h2>
+
+              <p style={{ color: "var(--text-muted)", fontSize: "1.05rem", lineHeight: "1.7", marginBottom: "24px" }}>
+                {result.text}
+              </p>
+
+              <div className="passport-card">
+                <div className="eyebrow">📋 YOUR SIGNAL SUMMARY</div>
+                <div className="passport-grid">
+                  <div className="passport-item">
+                    <span>Signals Reported</span>
+                    <strong style={{ color: result.color }}>{yesCards.length} / 10</strong>
+                  </div>
+                  <div className="passport-item">
+                    <span>Menstrual Criterion</span>
+                    <strong style={{ color: yesCards.some(c => c.criterion === "menstrual") ? "var(--coral)" : "var(--emerald)" }}>
+                      {yesCards.some(c => c.criterion === "menstrual") ? "⚠ Reported" : "✓ Not reported"}
+                    </strong>
+                  </div>
+                  <div className="passport-item">
+                    <span>Androgen Criterion</span>
+                    <strong style={{ color: yesCards.some(c => c.criterion === "androgen") ? "var(--coral)" : "var(--emerald)" }}>
+                      {yesCards.some(c => c.criterion === "androgen") ? "⚠ Reported" : "✓ Not reported"}
+                    </strong>
+                  </div>
+                  <div className="passport-item">
+                    <span>Next Step</span>
+                    <strong>{result.tip}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Reported signals list */}
+              {yesCards.length > 0 && (
+                <div className="deck-result-list">
+                  <div className="eyebrow" style={{ marginBottom: "12px" }}>📌 SIGNALS YOU REPORTED</div>
+                  {yesCards.map(card => (
+                    <div key={card.id} className="deck-result-item">
+                      <span className="deck-result-icon">{card.icon}</span>
+                      <div>
+                        <div className="deck-result-name">{card.signal}</div>
+                        <div className="deck-result-learn">{card.learnMore}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="source-pill" style={{ margin: "20px 0" }}>
+                Based on: 2023 International PCOS Guideline · Rotterdam Criteria · NIH Hormone Health
+              </div>
+
+              <div className="hero-actions" style={{ justifyContent: "center" }}>
+                <button
+                  className="primary-button"
+                  onClick={() => { setDeckIndex(0); setDeckAnswers({}); setDeckPhase("cards"); setDeckFlipped(false); }}
+                >
+                  Retake Deck 🔄
+                </button>
+                <button className="secondary-button" onClick={() => { setScreen("pcoslab"); }}>
+                  Go to PCOS Signal Lab →
+                </button>
+              </div>
+              <div style={{ marginTop: "16px", textAlign: "center" }}>
+                <button className="secondary-button" onClick={() => setScreen("island")}>
+                  Return to Map
+                </button>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* SCREEN 4: CYCLE CITY (TIMELINE & MYTH ARCADE) */}
         {screen === "cyclecity" && (
